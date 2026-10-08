@@ -8,7 +8,7 @@
 
 Fundamental Engine turns headlines and an economic calendar into an explainable research board for currencies, commodities, and equity indices. It keeps two questions separate: are interest-rate expectations moving up or down, and is the broader economic story supportive or negative? Each read links back to the situations behind it.
 
-**Still in development.** The scoring rules and transmission weights are research assumptions. They have not been validated as profitable trading signals. The engine does not place orders, connect to a broker, or calculate an asset's fair price. Here, valuation means weighing the importance of evidence.
+**In active development.** The engine is runnable, with ongoing improvements to the research pipeline and dashboard.
 
 ## What you get
 
@@ -28,9 +28,9 @@ Fundamental Engine turns headlines and an economic calendar into an explainable 
 
 For non-FX instruments, the policy lane represents their configured response to rate policy. For example, a hawkish USD policy read produces a negative policy contribution for an equity index. It does not describe that index as having its own central bank.
 
-![Offline research board with fictional examples](docs/assets/demo-board.png)
+![Live research dashboard](docs/assets/dashboard.png)
 
-*The offline demo uses fictional examples. Current evidence and expected calendar effects remain separate.*
+*Live dashboard captured after a research refresh on 8 October 2026 (UTC). Current evidence and expected calendar effects are shown separately.*
 
 ## Try it first — no key needed
 
