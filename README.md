@@ -30,15 +30,20 @@ For non-FX instruments, the policy lane represents their configured response to 
 
 ![Live research dashboard](docs/assets/dashboard.png)
 
-*Live dashboard captured after a research refresh on 8 October 2026 (UTC). Current evidence and expected calendar effects are shown separately.*
+*Instrument board from a live research refresh on 8 October 2026 (UTC). Current evidence and expected calendar effects are shown separately.*
+
+The screenshot shows live mode. The free demo below uses fictional examples; live refreshes require your own Anthropic API key and API credit.
 
 ## Try it first — no key needed
 
 You need **Python 3.11 or newer** and Git. Initial installation needs internet access. The demo then runs offline with fictional examples, uses the real scoring code, and makes no model calls.
 
+Check `python --version` first. If it shows a version below 3.11, create the environment with your newer Python instead. For example, use `py -3.13 -m venv .venv` on Windows if Python 3.13 is installed, or `python3 -m venv .venv` on macOS/Linux if `python3 --version` shows 3.11 or newer.
+
 ```bash
 git clone https://github.com/prentopoulos/fundamental-engine.git
 cd fundamental-engine
+python --version
 python -m venv .venv
 ```
 
