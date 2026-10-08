@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% import "_scale.html" as scale %}
+
+{% block heading %}
+  <h1 class="page-title">Where the book sits</h1>
+  <p class="page-sub">
+    Each line is one instrument on a bearish–bullish scale, policy above and direction below.
+    Nothing here is history — the board shows <strong>now</strong> and
+    <strong>what the week ahead does to it</strong>.
+  </p>
+  {# A line running dot-to-arrowhead reads naturally as "it moved from here to there",
+     i.e. past to present. It is the opposite: the dot is today and the arrow has not
+     happened yet. The key says so where the eye already is. #}
+  <p class="key">
+    <span class="k"><span class="dot flat key-dot"></span> where it stands today</span>
+    <span class="k"><span class="key-arrow"></span> where this week’s calendar is
+      <em>expected</em> to take it — not yet happened</span>
+  </p>
+{% endblock %}
+
+{% block styles %}
+    .key { display: flex; gap: 26px; margin: 10px 0 0; font-size: 11px; color: var(--ink-3); }
+    .key .k { display: inline-flex; align-items: center; gap: 7px; }
+    .key em { font-style: normal; color: var(--ink-1); }
+    .key-dot { position: static !important; transform: none !important; }
+    .key-arrow {
+      width: 26px; height: 2px; background: var(--ink-3); position: relative; flex: none;
+    }
+    .key-arrow::after {
+      content: ""; position: absolute; right: -1px; top: -3px; width: 7px; height: 8px;
+      background: var(--ink-3); clip-path: polygon(0 0, 100% 50%, 0 100%);
+    }
+
+    .legend { display: flex; align-items: center; }
+    .col-inst  { width: 150px; flex: none; padding-left: 24px; }
+    .col-scale { width: 592px; flex: none; padding-left: 64px; }
+    .col-bias  { width: 116px; flex: none; padding-left: 24px; }
+    .col-what  { flex: 1 1 auto; min-width: 0; padding: 0 20px 0 20px; }
+    .bias-word { font-size: 13px; font-weight: 600; }
+    .bias-word.wait { color: var(--ink-3); font-weight: 400; }
+    .bias-note { font-size: 10px; color: var(--ink-3); margin-top: 2px; }
+    .legend .label { font-size: 11px; font-weight: 500; color: var(--ink-3); }
+    .legend .ends { position: relative; width: 520px; height: 16px; font-size: 10px; font-weight: 500; }
+    .legend .ends .b { position: absolute; left: 0; color: var(--red); }
+    .legend .ends .n { position: absolute; left: 50%; transform: translateX(-50%); color: var(--ink-3); font-weight: 400; }
+    .legend .ends .u { position: absolute; right: 0; color: var(--green); }
+
+    .grp {
+      display: flex; align-items: center; gap: 10px; background: var(--wash);
+      padding: 14px 24px 8px; font-size: 11px;
+    }
+    .grp .name { flex: 1 1 auto; font-weight: 600; letter-spacing: .5px; color: var(--ink-2); }
+    .grp .n { color: var(--ink-3); }
+
+    .row {
+      display: flex; align-items: center; padding: 4px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .row:hover { background: var(--wash); }
+    .row .inst {
+      display: flex; flex-direction: column; justify-content: center; gap: 2px;
+      height: 54px; padding-right: 12px;
+    }
+    .row .ticker { font: 500 14px var(--mono); color: var(--ink-1); }
+    /* Wraps rather than running into the track labels — a long pair like
+       "moderately hawkish / slightly bearish" overflows 150px on one line. */
+    .row .pair { font-size: 10px; line-height: 1.35; color: var(--ink-3); }
+    .row .what { display: flex; flex-direction: column; justify-content: center; gap: 3px; }
+    .row .phrase { font-size: 13px; line-height: 18px; color: var(--ink-1); }
+    .row .phrase.crossing { color: var(--amber); font-weight: 600; }
+    .row .sub { font-size: 10px; color: var(--ink-3); }
+    .row.dim .ticker, .row.dim .pair, .row.dim .phrase { color: var(--ink-3); }
+    .row.focus { outline: 2px solid var(--ink-1); outline-offset: -2px; }
+
+    /* --- The line itself -------------------------------------------------------------- */
+    .scale { position: relative; width: 520px; height: 54px; }
+    /* The label sits outside the track, not inside it: every mark on the scale is
+       placed as a percentage, and a padded box would shift the marks off the line
+       they belong to. */
+    .scale .track-label {
+      position: absolute; right: 100%; margin-right: 10px; width: 46px;
+      transform: translateY(-50%); text-align: right;
+      font-size: 9px; letter-spacing: .03em; color: var(--ink-3); white-space: nowrap;
+    }
+    .scale .band {
+      position: absolute; top: 14px; height: 28px; background: #eef0f2; border-radius: 3px;
+    }
+    .scale .axis-line {
+      position: absolute; left: 0; width: 100%; height: 1px; background: var(--line);
+    }
+    .scale .zero {
+      position: absolute; left: 50%; top: 14px; width: 1px; height: 28px; background: #d5d8de;
+    }
+    .scale .dot {
+      position: absolute; width: 9px; height: 9px; border-radius: 50%;
+      transform: translate(-50%, -50%); border: 2px solid var(--paper);
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, .9);
+    }
+    .scale .dot.up { background: var(--green); }
+    .scale .dot.down { background: var(--red); }
+    .scale .dot.flat { background: var(--ink-3); }
+    .scale .connector {
+      position: absolute; height: 2px; transform: translateY(-50%); border-radius: 1px;
+      background: var(--ink-3); opacity: .55;
+    }
+    .scale .connector.crossing { background: var(--amber); opacity: 1; }
+    /* The arrowhead, cut from a real 7x8 box rather than built from a zero-size element's
+       borders. Same shape either way; this one has honest dimensions, and it does not read
+       as a card accent stripe to anything inspecting the stylesheet. */
+    .scale .head {
+      position: absolute; width: 7px; height: 8px; transform: translate(-50%, -50%);
+      background: var(--ink-3);
+    }
+    .scale .head.right { clip-path: polygon(0 0, 100% 50%, 0 100%); }
+    .scale .head.left  { clip-path: polygon(100% 0, 0 50%, 100% 100%); }
+    .scale .head.crossing { background: var(--amber); }
+    .scale .dashes {
+      position: absolute; left: 0; width: 100%; height: 1px; transform: translateY(-50%);
+      background: repeating-linear-gradient(
+        to right, var(--line) 0 7px, transparent 7px 16px);
+    }
+
+    .foot {
+      display: flex; align-items: center; background: var(--wash);
+      padding: 13px 24px; font-size: 12px;
+    }
+    .foot .l { flex: 1 1 auto; color: var(--amber); font-weight: 500; }
+    .foot .r { color: var(--ink-3); }
+{% endblock %}
+
+{% block content %}
+{% if rows %}
+<div class="card">
+
+  <div class="card-head legend" style="padding-left:0;padding-right:0">
+    <div class="col-inst label">Instrument</div>
+    <div class="col-scale">
+      <div class="ends"><span class="b">bearish</span><span class="n">neutral</span><span class="u">bullish</span></div>
+    </div>
+    <div class="col-bias label">Bias</div>
+    <div class="col-what label">What this week does</div>
+  </div>
+
+  {% for group, group_rows in grouped %}
+    <div class="grp">
+      <span class="name">{{ group_labels[group] }}</span>
+      <span class="n">{{ group_rows|length }}{% if group_units.get(group) %} {{ group_units[group] }}{% endif %}</span>
+    </div>
+    {% for row in group_rows %}
+      <div class="row{% if row.unreadable %} dim{% endif %}" id="row-{{ loop.index0 }}-{{ group }}"
+           data-href="/instrument/{{ row.ticker }}">
+        <div class="col-inst inst">
+          <a class="ticker" href="/instrument/{{ row.ticker }}">{{ row.ticker }}</a>
+          <span class="pair">{{ row.pair_words }}</span>
+        </div>
+        <div class="col-scale">{{ scale.line(row, band_from, band_width) }}</div>
+        <div class="col-bias">
+          {% if row.bias %}
+            <div class="bias-word {{ 'up' if row.bias.word == 'bullish'
+                                    else 'down' if row.bias.word == 'bearish'
+                                    else 'wait' }}">{{ row.bias.word }}</div>
+            <div class="bias-note">{{ row.bias.conviction }}</div>
+          {% endif %}
+        </div>
+        <div class="col-what what">
+          <span class="phrase{% if row.crosses_zero %} crossing{% endif %}">{{ row.phrase }}</span>
+          <span class="sub">
+            {%- if row.driver %}{{ row.driver }}{% else %}nothing scheduled{% endif -%}
+            {%- if row.beta_note %} · {{ row.beta_note }}{% endif -%}
+          </span>
+        </div>
+      </div>
+    {% endfor %}
+  {% endfor %}
+
+  <div class="foot">
+    <span class="l">
+      {% if crossing_count %}{{ crossing_count }} cross zero this week{% else %}Nothing crosses zero this week{% endif %}
+    </span>
+    <span class="r">
+      {{ rows|length }} instruments · {{ entity_count }} entities · {{ unreadable_count }} unreadable
+    </span>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block keys %}
+<script>
+  // j / k and the arrows walk the board in rank order; Enter opens the focused row. Rank
+  // order is the only order the operator navigates in, so the keys follow the rendered rows.
+  (function () {
+    var rows = Array.prototype.slice.call(document.querySelectorAll('.row'));
+    if (!rows.length) return;
+    var at = 0;
+    function focus(index) {
+      at = (index + rows.length) % rows.length;
+      rows.forEach(function (row) { row.classList.remove('focus'); });
+      rows[at].classList.add('focus');
+      rows[at].scrollIntoView({ block: 'nearest' });
+    }
+    document.addEventListener('keydown', function (event) {
+      if (event.target.tagName === 'INPUT' || event.metaKey || event.ctrlKey) return;
+      if (event.key === 'j' || event.key === 'ArrowDown') { focus(at + 1); event.preventDefault(); }
+      else if (event.key === 'k' || event.key === 'ArrowUp') { focus(at - 1); event.preventDefault(); }
+      else if (event.key === 'Enter') { window.location = rows[at].dataset.href; }
+    });
+    focus(0);
+  })();
+</script>
+{% endblock %}

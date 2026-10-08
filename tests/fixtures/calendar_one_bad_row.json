@@ -1,0 +1,7 @@
+[
+  {"title": "ECB Main Refinancing Rate", "country": "EUR", "date": "2026-09-03T08:15:00-04:00", "impact": "High", "forecast": "2.15%", "previous": "2.15%"},
+  {"title": "Mystery Release", "country": "GBP", "date": "2026-09-03T04:00:00-04:00", "impact": "Catastrophic", "forecast": "", "previous": ""},
+  {"title": "", "country": "CAD", "date": "2026-09-03T08:30:00-04:00", "impact": "Medium", "forecast": "", "previous": ""},
+  {"title": "Floating Timestamp", "country": "NZD", "date": "2026-09-03T21:45:00", "impact": "High", "forecast": "", "previous": ""},
+  {"title": "Non-Farm Employment Change", "country": "USD", "date": "2026-09-04T08:30:00-04:00", "impact": "High", "forecast": "78K", "previous": "104K"}
+]

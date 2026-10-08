@@ -1,0 +1,17 @@
+{# One axis cell. The class comes from the state, so `no read` can never be styled as a
+   neutral reading and never rendered with the word "neutral". #}
+{%- macro axis(cell) -%}
+  {%- if cell.state.value == 'NO_READ' -%}
+    <span class="blank" title="{{ cell.reason or 'nothing on file' }}">{{ cell.display }}</span>
+  {%- elif cell.state.value == 'POSITIVE' -%}
+    <span class="pos{% if cell.moving %} moving{% endif %}">{{ cell.display }}</span>
+  {%- elif cell.state.value == 'NEGATIVE' -%}
+    <span class="neg{% if cell.moving %} moving{% endif %}">{{ cell.display }}</span>
+  {%- else -%}
+    <span class="flat{% if cell.moving %} moving{% endif %}">{{ cell.display }}</span>
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro pair(policy, directional) -%}
+  {{ axis(policy) }} <span class="why">/</span> {{ axis(directional) }}
+{%- endmacro -%}

@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{# The order is the design's, and it is deliberate: the paragraph first and largest, then
+   the two axes, then the working that backs them, then what the week does about it. A page
+   that opens with a score table invites the operator to do the synthesis themselves, which
+   is the job the engine was built to do. #}
+
+{% block heading %}
+  <p class="crumb"><a href="/">Instruments</a> / <span class="here">{{ view.entity }}</span></p>
+  <h1 class="page-title">{{ view.entity }}</h1>
+  {% if view.instruments %}
+    <p class="page-sub">
+      Feeds
+      {% for ticker in view.instruments %}<a class="mono" href="/instrument/{{ ticker }}">{{ ticker }}</a>{% if not loop.last %} · {% endif %}{% endfor %}
+    </p>
+  {% endif %}
+{% endblock %}
+
+{% block styles %}
+    .read { padding: 28px 32px 20px; }
+    .read p.prose { margin: 0; font-size: 17px; line-height: 28px; color: var(--ink-1); }
+    .read .meta {
+      display: flex; gap: 20px; align-items: baseline; margin-top: 20px; font-size: 11px;
+      color: var(--ink-3);
+    }
+    .read .meta .flags { flex: 1 1 auto; }
+    .read .meta .cited { font-family: var(--mono); text-align: right; }
+
+    .axes { display: flex; gap: 20px; margin: 20px 0; }
+    .axes .card { flex: 1 1 0; min-width: 0; }
+    .ax { padding: 22px 26px 20px; }
+    .ax .top-row { display: flex; align-items: baseline; font-size: 12px; color: var(--ink-2); }
+    .ax .top-row .n { margin-left: auto; color: var(--ink-3); }
+    .ax .word-row { display: flex; align-items: baseline; gap: 10px; margin-top: 12px; }
+    .ax .word { font-size: 20px; font-weight: 600; }
+    .ax .score { margin-left: auto; font: 400 14px var(--mono); color: var(--ink-2); }
+    .ax .bar { position: relative; height: 4px; margin: 18px 0 14px; background: var(--line); border-radius: 2px; }
+    .ax .bar .fill { position: absolute; top: 0; height: 4px; border-radius: 2px; }
+    .ax .bar .fill.up { background: var(--green); }
+    .ax .bar .fill.down { background: var(--red); }
+    .ax .bar .fill.flat { background: var(--ink-3); }
+    /* Real evidence, not enough of it. Hollowed rather than hidden. */
+    .ax .bar .fill.ghost { opacity: .3; }
+    .ax .score.muted { color: var(--ink-3); }
+    .ax .bar .tick { position: absolute; top: -3px; width: 1px; height: 10px; background: #d5d8de; }
+    .ax .verdict { font-size: 12px; color: var(--ink-3); }
+
+    .body { display: flex; gap: 20px; align-items: flex-start; }
+    .body .left { flex: 1 1 auto; min-width: 0; }
+    .body .right { width: 360px; flex: none; display: flex; flex-direction: column; gap: 20px; }
+
+    .grp-label { padding: 12px 24px 4px; font-size: 11px; color: var(--ink-3); }
+    .grp-label.minority { color: var(--amber); }
+    .sit { display: flex; align-items: center; gap: 14px; padding: 9px 24px; font-size: 13px; }
+    .sit .id { width: 38px; flex: none; font: 400 12px var(--mono); color: var(--ink-3); }
+    .sit .desc { flex: 1 1 auto; min-width: 0; color: var(--ink-1); }
+    .sit .status { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+    .sit .mag { width: 34px; text-align: right; font: 400 13px var(--mono); }
+    .sit:last-child { padding-bottom: 16px; }
+
+    .pull { border-color: var(--amber); }
+    .pull .inner { padding: 20px 22px; }
+    .pull .kicker {
+      display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 600;
+      letter-spacing: .6px; color: var(--amber); text-transform: uppercase;
+    }
+    .pull .kicker .d { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+    .pull .lede { margin: 16px 0 18px; font-size: 15px; line-height: 22px; font-weight: 600; }
+    .pull .line { display: flex; gap: 12px; margin-bottom: 14px; }
+    .pull .line .k { width: 84px; flex: none; font-size: 12px; color: var(--ink-3); }
+    .pull .line .v { flex: 1 1 auto; min-width: 0; font-size: 13px; }
+    .pull .line .v .sub { display: block; margin-top: 2px; font-size: 11px; color: var(--ink-3); }
+    .pull .rule { height: 1px; background: var(--line); margin: 4px 0 16px; }
+    .pull .window { font-size: 13px; font-weight: 500; }
+
+    .evt { padding: 11px 24px 12px; border-top: 1px solid var(--line); }
+    .evt .t { display: flex; align-items: baseline; gap: 12px; }
+    .evt .t .name { flex: 1 1 auto; min-width: 0; font-size: 13px; }
+    .evt .t .when { font: 400 12px var(--mono); color: var(--ink-3); white-space: nowrap; }
+    .evt .t .when.decisive { color: var(--amber); }
+    .evt .r { margin-top: 3px; font-size: 11px; color: var(--ink-3); }
+    .empty { padding: 16px 24px; font-size: 13px; color: var(--ink-3); }
+{% endblock %}
+
+{% block content %}
+
+{# 1. The paragraph. This is what the page is for. #}
+<div class="card">
+  <div class="read">
+    {% if view.narrative %}
+      <p class="prose">{{ view.narrative }}</p>
+    {% else %}
+      <p class="prose blank">No breakdown has been written for {{ view.entity }} yet.</p>
+    {% endif %}
+    <div class="meta">
+      <span class="flags">
+        {% if view.triggers %}
+          Flagged · {{ view.triggers|join(', ')|replace('_', ' ') }}
+        {% else %}
+          Nothing is arguing with this read
+        {% endif %}
+        · written {{ view.narrative_age.words }}{% if view.narrative_age.is_stale %} · stale{% endif %}
+      </span>
+      {% if view.cited %}
+        <span class="cited">cited {{ view.cited|join(' · ') }}</span>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{# 2. The two axes, each with its number placed against the bar. #}
+<div class="axes">
+  {% for cell, label in [(view.policy, 'Policy'), (view.directional, 'Direction')] %}
+    <div class="card">
+      <div class="ax">
+        <div class="top-row">
+          <span>{{ label }}</span>
+          <span class="n">{{ cell.contributors }} situation{{ '' if cell.contributors == 1 else 's' }}</span>
+        </div>
+        <div class="word-row">
+          <span class="word {{ tone(cell) }}">{{ cell.words }}</span>
+          {# The score is shown even when the axis is unreadable, as long as something is
+             on file. Refusing to call one story a read is the rule; hiding the number we
+             computed is just losing information the operator asked for. #}
+          {% if cell.score is not none and cell.contributors %}
+            <span class="score{% if cell.unreadable %} muted{% endif %}">
+              {{ '%+.1f'|format(cell.score) }}
+            </span>
+          {% endif %}
+        </div>
+        <div class="bar">
+          <div class="tick" style="left:{{ '%.3f'|format(band_from) }}%"></div>
+          <div class="tick" style="left:{{ '%.3f'|format(band_from + band_width) }}%"></div>
+          {% if cell.contributors %}
+            {% set edge = bar_position(cell.score) %}
+            {# A ghost fill where the evidence is real but uncorroborated: you can see
+               which way it leans without it being dressed up as a read. #}
+            <div class="fill {{ tone(cell) }}{% if cell.unreadable %} ghost{% endif %}"
+                 style="left:{{ '%.3f'|format([edge, 50.0]|min) }}%;width:{{ '%.3f'|format((edge - 50.0)|abs) }}%"></div>
+          {% endif %}
+        </div>
+        <div class="verdict">{{ verdicts[label] }}</div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<div class="body">
+  <div class="left">
+
+    {# 3. The working: contributing situations, majority first so the counter-evidence is
+          visibly the minority. #}
+    <div class="card">
+      <div class="card-head">
+        <span class="h">What is behind the read</span>
+        <span class="n">{{ view.open_situations }} open</span>
+      </div>
+      {% if not (view.policy_situations or view.directional_situations) %}
+        <p class="empty">Nothing on file for {{ view.entity }} on either axis.</p>
+      {% endif %}
+      {% for label, situations in [
+           ('Direction', view.directional_situations), ('Policy', view.policy_situations)] %}
+        {% if situations %}
+          {% set majority = situations|rejectattr('minority')|list %}
+          {% set minority = situations|selectattr('minority')|list %}
+          <div class="grp-label">{{ agreement(situations, label) }}</div>
+          {% for s in majority %}
+            <div class="sit">
+              <span class="id">{{ s.identifier }}</span>
+              <span class="desc">{{ s.description }}</span>
+              <span class="status">{{ s.status|lower }}</span>
+              <span class="mag {{ 'up' if s.polarity > 0 else 'down' }}">{{ s.sign }}{{ '%g'|format(s.magnitude) }}</span>
+            </div>
+          {% endfor %}
+          {% if minority %}
+            <div class="grp-label minority">Arguing the other way</div>
+            {% for s in minority %}
+              <div class="sit">
+                <span class="id">{{ s.identifier }}</span>
+                <span class="desc">{{ s.description }}</span>
+                <span class="status">{{ s.status|lower }}</span>
+                <span class="mag {{ 'up' if s.polarity > 0 else 'down' }}">{{ s.sign }}{{ '%g'|format(s.magnitude) }}</span>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="right">
+
+    {# 4. The pull: what the week does to this read, and how long there is to act on it. #}
+    <div class="card pull">
+      <div class="inner">
+        <div class="kicker"><span class="d"></span>The pull this week</div>
+        <p class="lede">{{ pull_lede }}</p>
+
+        <div class="line">
+          <span class="k">now</span>
+          <span class="v">
+            <span class="{{ tone(view.policy) }}">{{ view.policy.words }}</span>
+            <span class="blank">/</span>
+            <span class="{{ tone(view.directional) }}">{{ view.directional.words }}</span>
+          </span>
+        </div>
+
+        {% if view.expectation %}
+          <div class="line">
+            <span class="k">coming up</span>
+            <span class="v">
+              <span class="{{ tone(view.expected_policy) }}">{{ view.expected_policy.words }}</span>
+              <span class="blank">/</span>
+              <span class="{{ tone(view.expected_directional) }}">{{ view.expected_directional.words }}</span>
+              {% if decisive %}<span class="sub">{{ decisive }}</span>{% endif %}
+            </span>
+          </div>
+          <div class="line">
+            <span class="k">confidence</span>
+            <span class="v">{{ view.expectation.confidence|lower }}</span>
+          </div>
+        {% endif %}
+
+        <div class="rule"></div>
+        <div class="window">
+          {% if view.window_days is not none %}
+            Window to position: {{ view.window_words }}
+          {% else %}
+            Nothing scheduled — no window to work with
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {# 5. The week's calendar, forecast against previous. No released values — there are none. #}
+    <div class="card">
+      <div class="card-head">
+        <span class="h">This week</span>
+        <span class="n">med + high</span>
+      </div>
+      {% if view.events %}
+        {% for event in view.events %}
+          <div class="evt"{% if loop.first %} style="border-top:0"{% endif %}>
+            <div class="t">
+              <span class="name">{{ event.title }}</span>
+              <span class="when{% if view.expectation and event.id == view.expectation.decisive_event_id %} decisive{% endif %}">
+                {{ event.scheduled_at.strftime('%a %H:%M') }}
+              </span>
+            </div>
+            {% if event.forecast_text or event.previous_text %}
+              <div class="r">
+                {% if event.forecast_text %}forecast {{ event.forecast_text }}{% endif %}
+                {% if event.forecast_text and event.previous_text %} · {% endif %}
+                {% if event.previous_text %}previous {{ event.previous_text }}{% endif %}
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="empty">Nothing Medium or High impact scheduled in the window.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block keys %}
+<script>
+  // h / l and the left-right arrows shuffle between entities without going back to a menu.
+  (function () {
+    var previous = "/entity/{{ previous }}", next = "/entity/{{ next }}";
+    document.addEventListener('keydown', function (event) {
+      if (event.target.tagName === 'INPUT' || event.metaKey || event.ctrlKey) return;
+      if (event.key === 'h' || event.key === 'ArrowLeft') window.location = previous;
+      else if (event.key === 'l' || event.key === 'ArrowRight') window.location = next;
+    });
+  })();
+</script>
+{% endblock %}

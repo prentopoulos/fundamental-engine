@@ -1,0 +1,6 @@
+[
+  {"title": "ECB Main Refinancing Rate", "country": "EUR", "date": "2026-09-03T08:15:00-04:00", "impact": "High", "forecast": "2.15%", "previous": "2.15%"},
+  {"title": "Non-Farm Employment Change", "country": "USD", "date": "2026-09-04T08:30:00-04:00", "impact": "High", "forecast": "78K", "previous": "104K"},
+  {"title": "Bank Lending y/y", "country": "JPY", "date": "2026-09-01T19:50:00-04:00", "impact": "Low", "forecast": "5.7%", "previous": "5.7%"},
+  {"title": "Retail Sales m/m", "country": "AUD", "date": "2026-09-02T21:30:00-04:00", "impact": "Medium", "forecast": "0.3%", "previous": "0.5%"}
+]

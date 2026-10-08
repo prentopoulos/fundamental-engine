@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block heading %}
+  <p class="crumb"><a href="/">Instruments</a> · <span class="here">Desk</span></p>
+  <h1 class="page-title">Ask the desk</h1>
+  <p class="page-sub">
+    Questions about the current read — what a pair is saying, what is behind it, and what is
+    coming that could hurt a position. It answers from the board and the calendar only:
+    <strong>no prices, no levels, no charts.</strong>
+  </p>
+{% endblock %}
+
+{% block styles %}
+    .thread { display: flex; flex-direction: column; gap: 18px; max-width: 760px; }
+    .turn { display: flex; flex-direction: column; gap: 7px; }
+    .asked {
+      align-self: flex-end; max-width: 82%; background: var(--ink-1); color: #fff;
+      padding: 10px 14px; border-radius: 14px 14px 4px 14px; font-size: 13.5px;
+      line-height: 1.5; white-space: pre-wrap;
+    }
+    .said {
+      background: var(--paper); border: 1px solid var(--line); border-radius: 4px 14px 14px 14px;
+      padding: 14px 16px; font-size: 14px; line-height: 1.62; white-space: pre-wrap;
+      box-shadow: var(--shadow); max-width: 92%;
+    }
+    .meta { font: 400 11px var(--mono); color: var(--ink-3); padding-left: 2px; }
+    .said.streaming::after {
+      content: ""; display: inline-block; width: 7px; height: 1.05em; margin-left: 2px;
+      background: var(--ink-3); vertical-align: text-bottom; animation: blink 1.1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .said.streaming::after { animation: none; } }
+
+    .empty {
+      border: 1px dashed var(--line); border-radius: var(--radius); padding: 22px 24px;
+      color: var(--ink-2); font-size: 13.5px; max-width: 760px; background: var(--wash);
+    }
+    .empty ul { margin: 10px 0 0; padding-left: 18px; }
+    .empty li { margin: 4px 0; }
+
+    .composer {
+      position: sticky; bottom: 0; background: var(--canvas);
+      padding: 18px 0 0; margin-top: 26px; max-width: 760px;
+    }
+    .composer .box {
+      display: flex; align-items: flex-end; gap: 10px; background: var(--paper);
+      border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 10px 10px 14px;
+      box-shadow: var(--shadow);
+    }
+    .composer textarea {
+      flex: 1 1 auto; border: 0; outline: 0; resize: none; background: transparent;
+      font: 400 14px/1.55 var(--sans); color: var(--ink-1); min-height: 44px; max-height: 200px;
+    }
+    .composer textarea::placeholder { color: var(--ink-3); }
+    .icon-btn {
+      flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
+      border: 1px solid var(--line); background: var(--paper); color: var(--ink-2);
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .icon-btn:hover { color: var(--ink-1); border-color: var(--ink-3); }
+    .icon-btn.live {
+      background: var(--red); border-color: var(--red); color: #fff;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    .icon-btn[hidden] { display: none; }
+    @keyframes pulse { 50% { opacity: .58; } }
+    @media (prefers-reduced-motion: reduce) { .icon-btn.live { animation: none; } }
+
+    .hint { margin: 9px 2px 0; font-size: 11.5px; color: var(--ink-3); display: flex;
+            justify-content: space-between; gap: 16px; }
+    .hint .warn { color: var(--amber); }
+{% endblock %}
+
+{% block content %}
+  <div class="thread" id="thread">
+  {% if history %}
+      {% for turn in history %}
+        <div class="turn">
+          <div class="asked">{{ turn.question }}</div>
+          <div class="said">{{ turn.answer }}</div>
+          <div class="meta">
+            {{ turn.asked_at[11:16] }} UTC · ${{ '%.4f'|format(turn.cost_usd) }}
+          </div>
+        </div>
+      {% endfor %}
+  {% else %}
+    <div class="empty">
+      Nothing asked yet. It has the whole board in front of it — every pair, both axes, the
+      open situations and the week's calendar. Try:
+      <ul>
+        <li>I want to start shorting CADJPY right now. What should I know, and is anything
+            coming up I should worry about?</li>
+        <li>What is the strongest read on the board and what is behind it?</li>
+        <li>Which pairs have nothing scheduled this week?</li>
+        <li>What would have to happen for the EUR policy read to change?</li>
+      </ul>
+    </div>
+  {% endif %}
+  </div>
+
+  <form class="composer" method="post" action="/chat" id="ask">
+    <div class="box">
+      <textarea name="question" id="q" rows="1" required
+                placeholder="Ask about a pair, a currency, or what is coming this week…"></textarea>
+      <button class="icon-btn" type="button" id="mic" hidden
+              title="Dictate" aria-label="Dictate the question">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect x="5.5" y="1.5" width="5" height="8.5" rx="2.5"
+                stroke="currentColor" stroke-width="1.4"/>
+          <path d="M3 7.4v.8a5 5 0 0 0 10 0v-.8M8 13.2V15"
+                stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="btn" type="submit" id="send">Ask</button>
+    </div>
+    <p class="hint">
+      <span id="state">One question, one Opus call — about 10c, then ~4c for follow-ups.</span>
+      <span>spent on questions so far ${{ '%.2f'|format(chat_spent) }}</span>
+    </p>
+  </form>
+
+  <script>
+    (function () {
+      const box = document.getElementById('q');
+      const form = document.getElementById('ask');
+      const send = document.getElementById('send');
+      const state = document.getElementById('state');
+      const mic = document.getElementById('mic');
+
+      // Grow the box with the question rather than scrolling a two-line window.
+      const grow = () => { box.style.height = 'auto';
+                           box.style.height = Math.min(box.scrollHeight, 200) + 'px'; };
+      box.addEventListener('input', grow);
+
+      // Land on the newest turn rather than the top of the page, and put the cursor back
+      // where the next question goes.
+      const thread = document.getElementById('thread');
+      const toBottom = () => window.scrollTo({ top: document.body.scrollHeight });
+      toBottom();
+      box.focus();
+
+      // Streamed answers. The blocking POST below still works with JavaScript off, but a
+      // question takes fifteen to thirty seconds and a form post spends all of it showing
+      // an empty screen. Streamed, the first words land in about two seconds.
+      form.addEventListener('submit', async (e) => {
+        const question = box.value.trim();
+        if (!question) return;
+        e.preventDefault();
+
+        document.querySelector('.empty')?.remove();
+        box.value = '';
+        grow();
+        send.disabled = true;
+        send.textContent = 'Thinking…';
+        state.textContent = 'Reading the board…';
+
+        // Echo the question immediately. Waiting for the server to confirm it makes the
+        // interface feel broken for the second or two before the first token.
+        const turn = document.createElement('div');
+        turn.className = 'turn';
+        const asked = document.createElement('div');
+        asked.className = 'asked';
+        asked.textContent = question;
+        const said = document.createElement('div');
+        said.className = 'said streaming';
+        turn.append(asked, said);
+        thread.append(turn);
+        toBottom();
+
+        try {
+          const body = new URLSearchParams({ question });
+          const res = await fetch('/chat/stream', { method: 'POST', body });
+          if (!res.ok || !res.body) throw new Error('HTTP ' + res.status);
+
+          const reader = res.body.getReader();
+          const decode = new TextDecoder();
+          let buffer = '';
+          let pinned = true;
+
+          // Stop chasing the bottom the moment they scroll up to re-read something.
+          const watch = () => {
+            pinned = window.innerHeight + window.scrollY >= document.body.scrollHeight - 80;
+          };
+          window.addEventListener('scroll', watch, { passive: true });
+
+          for (;;) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decode.decode(value, { stream: true });
+
+            // SSE frames are separated by a blank line; anything after the last one is a
+            // partial frame and has to wait for the next chunk.
+            const frames = buffer.split('\n\n');
+            buffer = frames.pop();
+            for (const frame of frames) {
+              const kind = /^event: (\w+)$/m.exec(frame)?.[1];
+              const data = /^data: (.*)$/m.exec(frame)?.[1];
+              if (!data) continue;
+              if (kind === 'text') {
+                said.textContent += JSON.parse(data);
+                if (pinned) toBottom();
+              } else if (kind === 'done') {
+                const cost = JSON.parse(data).cost;
+                const meta = document.createElement('div');
+                meta.className = 'meta';
+                meta.textContent = new Date().toISOString().slice(11, 16)
+                  + ' UTC · $' + cost.toFixed(4);
+                turn.append(meta);
+              }
+            }
+          }
+          window.removeEventListener('scroll', watch);
+        } catch (err) {
+          said.textContent = said.textContent
+            || 'The connection dropped before an answer arrived. Ask again.';
+        } finally {
+          said.classList.remove('streaming');
+          send.disabled = false;
+          send.textContent = 'Ask';
+          state.textContent = 'One question, one Opus call — roughly 4–10 cents.';
+          box.focus();
+        }
+      });
+
+      // Enter sends, shift+Enter breaks the line — the convention every chat box uses.
+      box.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); }
+      });
+
+      // Dictation, where the browser has it. Chrome only, and it does the recognition on
+      // Google's servers — so the question leaves this machine even though the board never
+      // does. Everything still works typed if this is absent.
+      const Recog = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!Recog) return;
+      mic.hidden = false;
+
+      const recog = new Recog();
+      recog.continuous = true;
+      recog.interimResults = true;
+      recog.lang = 'en-GB';
+
+      let listening = false, settled = '';
+
+      recog.onresult = (event) => {
+        let live = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const chunk = event.results[i][0].transcript;
+          if (event.results[i].isFinal) { settled += chunk; } else { live += chunk; }
+        }
+        box.value = (settled + live).replace(/\s+/g, ' ').trimStart();
+        grow();
+      };
+      recog.onerror = (e) => {
+        state.textContent = e.error === 'not-allowed'
+          ? 'Microphone blocked — allow it in the address bar, or type instead.'
+          : 'Dictation stopped: ' + e.error;
+        stop();
+      };
+      recog.onend = () => { if (listening) { try { recog.start(); } catch (_) {} } };
+
+      function stop() {
+        listening = false;
+        mic.classList.remove('live');
+        recog.stop();
+      }
+
+      mic.addEventListener('click', () => {
+        if (listening) { stop(); state.textContent = 'Stopped listening.'; return; }
+        settled = box.value ? box.value.trimEnd() + ' ' : '';
+        listening = true;
+        mic.classList.add('live');
+        state.textContent = 'Listening — click the mic again to stop.';
+        try { recog.start(); } catch (_) {}
+      });
+    })();
+  </script>
+{% endblock %}

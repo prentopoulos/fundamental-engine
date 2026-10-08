@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>InvestingLive News</title>
+    <link>https://www.investinglive.com/</link>
+    <item>
+      <title>ECB's Lagarde: inflation risks remain tilted to the upside</title>
+      <description><![CDATA[<p>Speaking in Frankfurt, the ECB President said the <b>Governing Council</b> is not done.</p><ul><li>Rates to stay restrictive</li></ul>]]></description>
+      <link>https://www.investinglive.com/centralbank/ecb-lagarde-20260831</link>
+      <pubDate>Mon, 31 Aug 2026 09:14:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>US ISM manufacturing 47.8 vs 48.4 expected</title>
+      <description><![CDATA[A softer print than the consensus looked for.]]></description>
+      <link>https://www.investinglive.com/data/us-ism-20260831</link>
+      <pubDate>Mon, 31 Aug 2026 14:00:11 GMT</pubDate>
+    </item>
+    <item>
+      <title>This item has no link and must be dropped</title>
+      <description>No link, no identity.</description>
+      <pubDate>Mon, 31 Aug 2026 14:05:00 GMT</pubDate>
+    </item>
+    <item>
+      <description>No title either.</description>
+      <link>https://www.investinglive.com/data/anonymous</link>
+      <pubDate>Mon, 31 Aug 2026 14:06:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Unparseable date</title>
+      <description>The date is not RFC 822.</description>
+      <link>https://www.investinglive.com/data/baddate</link>
+      <pubDate>sometime last Tuesday</pubDate>
+    </item>
+  </channel>
+</rss>

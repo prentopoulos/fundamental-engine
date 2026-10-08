@@ -1,0 +1,62 @@
+# Adjustable assumptions. Read docs/methodology.md before changing the scoring rules.
+reading:
+  READ_THRESHOLD: 3.5          # Minimum absolute score for a directional state.
+  SHOCK_MAGNITUDE: 7          # A material shock may meet breadth on its own.
+  MIN_SITUATIONS: 2           # Otherwise require at least two material situations.
+  RECENCY_HALF_LIFE:
+    POLICY: 21               # Rate-policy evidence usually persists longer.
+    DIRECTIONAL: 7           # Growth, flows, and event news fade faster.
+  BREADTH_FLOOR: 0.5          # Material contribution >= 0.5 * READ_THRESHOLD.
+  DEGREE_BANDS:               # Display labels; these do not change the state.
+    slightly: 3.5
+    moderately: 7
+    strongly: 12
+  NEAR_MISS_MARGIN: 0.7
+
+situations:
+  FADE_AFTER: 4               # Mark quiet stories as fading, without resolving them.
+  ARCHIVE_AFTER: 60           # Exclude old evidence from the current read.
+  SITUATION_WARNING_COUNT: 15
+
+expectation:
+  HORIZON_DAYS: 7
+  IMPACTS: [High, Medium]
+  CONFIDENCE_WEIGHTS:         # Ranking weights, not probability estimates.
+    HIGH: 1.0
+    MEDIUM: 0.6
+    LOW: 0.3
+
+loop:
+  ENABLED: false             # Run a manual pass before enabling automatic API calls.
+  HOURLY_MINUTES: 0           # 0 = releases only; a positive value adds periodic reads.
+  STALE_MARGIN_MINUTES: 30
+  STALE_AFTER_MINUTES: 720    # Staleness limit when periodic reads are disabled.
+  RELEASE_DELAY_MINUTES: 5
+  DEBOUNCE_MINUTES: 10
+  RELEASE_WATCH_LIST: [AUD, CAD, EUR, GBP, JPY, NZD, USD]
+
+model:
+  TRIAGE: claude-haiku-4-5-20251001
+  SCORE: claude-opus-5-5
+  SITUATIONS: claude-opus-5-5
+  EXPECTATION: claude-opus-5-5
+  NARRATIVE: claude-opus-5-5
+  CHAT: claude-opus-5-5
+  # USD per million tokens. Estimates only; confirm rates for your account.
+  # Cache prices below describe the five-minute prompt cache used by this client.
+  PRICES:
+    claude-haiku-4-5-20251001: {input: 1.0, output: 5.0, cache_read: 0.1, cache_write: 1.25}
+    claude-opus-5-5: {input: 4.0, output: 20.0, cache_read: 0.4, cache_write: 5.0}
+
+feeds:
+  # Public RSS and news-sitemap endpoints. No article-body scraping.
+  HEADLINE_URLS:
+    - https://www.forexlive.com/feed/news
+    - https://www.forexlive.com/feed/centralbank
+    - https://www.forexlive.com/feed/forex
+  SITEMAP_URLS:
+    - https://investinglive.com/latest.xml
+
+database:
+  path: data/engine.db
+  cache_dir: build/model_cache

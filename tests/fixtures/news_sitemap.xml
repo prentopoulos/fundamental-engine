@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+  <url>
+    <loc>https://investinglive.com/central-banks/ecb-lagarde-20260831/</loc>
+    <news:news>
+      <news:publication><news:name>InvestingLive</news:name><news:language>en</news:language></news:publication>
+      <news:publication_date>2026-08-31T09:14:00Z</news:publication_date>
+      <news:title>ECB's Lagarde: inflation risks remain tilted to the upside</news:title>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://investinglive.com/news/us-ism-20260831/</loc>
+    <news:news>
+      <news:publication_date>2026-08-31T14:00:11+00:00</news:publication_date>
+      <news:title>US ISM manufacturing 47.8 vs 48.4 expected</news:title>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://investinglive.com/news/no-title/</loc>
+    <news:news><news:publication_date>2026-08-31T15:00:00Z</news:publication_date></news:news>
+  </url>
+  <url>
+    <loc>https://investinglive.com/news/floating-date/</loc>
+    <news:news>
+      <news:publication_date>2026-08-31T16:00:00</news:publication_date>
+      <news:title>Timestamp carries no offset</news:title>
+    </news:news>
+  </url>
+  <url>
+    <loc>https://investinglive.com/news/not-an-article/</loc>
+  </url>
+</urlset>

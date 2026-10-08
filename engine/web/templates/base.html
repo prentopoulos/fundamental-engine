@@ -1,0 +1,207 @@
+{# Shared layout and theme for the board, details, and desk. #}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} · Fundamental Engine</title>
+  <style>
+    :root {
+      /* Surfaces */
+      --canvas: #f7f7f8;
+      --paper:  #ffffff;
+      --wash:   #fbfbfc;
+      --line:   #e8e8ec;
+
+      /* Text, three weights of presence */
+      --ink-1: #16171a;
+      --ink-2: #5f6470;
+      --ink-3: #9aa0ac;
+
+      /* The three things a read can be. Amber is reserved for a crossing — the loudest
+         thing the board can say — so it must not be spent on anything else. */
+      --red:   #dd4f5e;
+      --green: #25a878;
+      --amber: #d9862a;
+
+      --radius: 14px;
+      --shadow: 0 2px 8px -2px rgba(15, 18, 26, .06);
+
+      --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink-1);
+      font: 400 14px/1.5 var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .page { max-width: 1320px; margin: 0 auto; padding: 48px 56px 64px; }
+
+    /* --- Page header ---------------------------------------------------------------- */
+    .top { display: flex; align-items: flex-start; gap: 24px; margin-bottom: 30px; }
+    .top .lead-col { flex: 1 1 auto; min-width: 0; }
+    h1.page-title {
+      margin: 0 0 7px; font-size: 30px; font-weight: 600; letter-spacing: -.7px;
+      color: var(--ink-1);
+    }
+    .page-sub { margin: 0; font-size: 14px; line-height: 21px; color: var(--ink-2); max-width: 620px; }
+    .crumb { font-size: 12px; color: var(--ink-3); margin: 0 0 14px; }
+    .crumb .here { color: var(--ink-1); }
+
+    .controls { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--ink-1); color: #fff; border: 0; cursor: pointer;
+      padding: 9px 16px 9px 14px; border-radius: 8px;
+      font: 500 13px var(--sans);
+      box-shadow: 0 1px 2px 0 rgba(15, 18, 26, .16);
+    }
+    .btn:disabled { background: var(--ink-3); cursor: progress; }
+    .btn svg { display: block; }
+    /* Secondary action. Refresh spends money and stays the loud one. */
+    .btn.ghost {
+      background: var(--paper); color: var(--ink-2); border: 1px solid var(--line);
+      box-shadow: none; text-decoration: none;
+    }
+    .btn.ghost:hover { color: var(--ink-1); border-color: var(--ink-3); text-decoration: none; }
+    .stamp { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+    .stamp .age { font-size: 12px; color: var(--ink-3); }
+    .stamp .age.stale { color: var(--red); font-weight: 500; }
+    .stamp .auto { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-3); }
+    .stamp .next { font: 400 11px var(--mono); color: var(--ink-3); }
+    .dot-live { width: 5px; height: 5px; border-radius: 50%; background: var(--green); flex: none; }
+    .dot-live.off { background: var(--ink-3); }
+
+    /* --- Cards ------------------------------------------------------------------------ */
+    .card {
+      background: var(--paper); border: 1px solid var(--line);
+      border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+    }
+    .card-head {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--wash); border-bottom: 1px solid var(--line);
+      padding: 13px 24px; font-size: 12px;
+    }
+    .card-head .h { flex: 1 1 auto; min-width: 0; color: var(--ink-1); font-weight: 500; }
+    .card-head .n { color: var(--ink-3); font-size: 11px; white-space: nowrap; }
+
+    /* --- Banners ---------------------------------------------------------------------- */
+    .banner {
+      border: 1px solid var(--amber); background: #fdf6ec; color: #8a5615;
+      border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; font-size: 12px;
+      line-height: 1.6;
+    }
+    .banner strong { color: #6d430f; }
+    .banner ul { margin: 6px 0 0; padding-left: 18px; }
+    .banner code { font: 400 11px var(--mono); }
+    .note { font-size: 12px; color: var(--ink-3); margin: 0 0 20px; }
+
+    /* --- Tone -------------------------------------------------------------------------- */
+    .up    { color: var(--green); }
+    .down  { color: var(--red); }
+    .flat  { color: var(--ink-2); }
+    .blank { color: var(--ink-3); }
+    .cross { color: var(--amber); font-weight: 600; }
+    .mono  { font-family: var(--mono); }
+
+    {% block styles %}{% endblock %}
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <header class="top">
+    <div class="lead-col">
+      {% block heading %}{% endblock %}
+    </div>
+    <div class="controls">
+      {% if not demo %}
+      <a class="btn ghost" href="/chat">
+        {# A speech bubble. Inline like the refresh glyph, for the same reason. #}
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M12.3 8.2c0 1.3-1.1 2.4-2.5 2.4H6.2L3.1 12.6V10.4A2.5 2.5 0 0 1 1.7 8.2V4.1
+                   c0-1.3 1.1-2.4 2.5-2.4h5.6c1.4 0 2.5 1 2.5 2.4z"
+                stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+        </svg>
+        Ask the desk
+      </a>
+      <form method="post" action="/refresh" style="margin:0">
+        <button class="btn" type="submit" {% if refresh.running %}disabled{% endif %}>
+          {# The refresh glyph, drawn inline: a rotation arrow. Two paths, no asset to expire. #}
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M12.2 7a5.2 5.2 0 1 1-1.53-3.68" stroke="currentColor"
+                  stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M12.4 1.4v3.1H9.3" stroke="currentColor"
+                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          {% if refresh.running %}Refreshing…{% else %}Refresh now{% endif %}
+        </button>
+      </form>
+      {% endif %}
+      <div class="stamp">
+        <span class="age{% if age.is_stale %} stale{% endif %}">
+          updated {{ age.words }}{% if age.is_stale %} · stale{% endif %}
+        </span>
+        {# `cadence` is built in config from HOURLY_MINUTES, so a header that claims a
+           cadence the scheduler does not keep is not possible. #}
+        <span class="auto">
+          <span class="dot-live{% if not scheduler_enabled %} off{% endif %}"></span>
+          auto: {{ cadence }}
+        </span>
+        <span class="next">
+          {% if next_scheduled %}next scheduled {{ next_scheduled.strftime('%H:%M') }} · {% endif %}
+          {% if next_release %}next release {{ next_release.currency }} {{ next_release.at.strftime('%H:%M') }}
+          {% else %}no release watched{% endif %}
+        </span>
+      </div>
+    </div>
+  </header>
+
+  {% if demo %}
+    <div class="banner"><strong>Demo mode</strong> · Fictional examples, calculated locally.
+      No live feeds or model calls. Refresh and chat are disabled.</div>
+  {% endif %}
+
+  {% if refresh.failed_stage %}
+    <div class="banner">
+      The last forced refresh failed at stage <strong>{{ refresh.failed_stage }}</strong>.
+      {{ refresh.failure }}<br>
+      The reads below are the previous ones, shown at their true age.
+    </div>
+  {% endif %}
+
+  {% if failure %}
+    <div class="banner">
+      The most recent pass failed at stage <strong>{{ failure.failed_stage }}</strong>
+      ({{ failure.started_at }}).<br>{{ failure.failure }}<br>
+      {% if pass %}The reads below are from before it, at their true age.
+      {% else %}No read has ever completed, so there is nothing to show.{% endif %}
+    </div>
+  {% endif %}
+
+  {% if warnings %}
+    <div class="banner">
+      This read carries warnings:
+      <ul>{% for warning in warnings %}<li><code>{{ warning }}</code></li>{% endfor %}</ul>
+    </div>
+  {% endif %}
+
+  {% if not pass %}
+    <p class="note">
+      No pass has completed yet. Run <code>python -m engine</code>, or press Refresh now.
+    </p>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</div>
+{% block keys %}{% endblock %}
+</body>
+</html>

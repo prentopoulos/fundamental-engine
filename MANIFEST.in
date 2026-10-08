@@ -1,0 +1,6 @@
+include .env.example CHANGELOG.md CONTRIBUTING.md PROJECT.md SECURITY.md
+include mcp_server.py
+recursive-include config *.yaml
+recursive-include docs *.md *.png
+recursive-include scripts *.py
+recursive-include tests *.py *.json *.html *.xml

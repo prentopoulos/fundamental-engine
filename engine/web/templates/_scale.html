@@ -1,0 +1,42 @@
+{# One instrument's line: bearish on the left, bullish on the right.
+
+   Both axes are drawn on the same line — policy above the baseline, direction below —
+   rather than the single track the Figma shows. That is a deliberate departure: the design
+   was drawn against a one-word-per-instrument read, and the spec is explicit that the pair
+   is never collapsed, because the disagreement between the axes is usually the most
+   interesting thing on the screen. Everything else is the design's: the shaded neutral
+   band, the zero tick, a dot for now, an arrow for where the week pushes it, and a dashed
+   line where there is nothing to say. #}
+
+{%- macro track(t, y) -%}
+  {%- if not t or not t.readable -%}
+    <div class="dashes" style="top:{{ y }}px" title="{{ t.reason if t else 'nothing on file' }}"></div>
+  {%- else -%}
+    {%- if t.moving -%}
+      <div class="connector {{ t.now.tone }}{% if t.crosses_zero %} crossing{% endif %}"
+           style="left:{{ '%.3f'|format(t.bar_from) }}%;width:{{ '%.3f'|format(t.bar_width) }}%;top:{{ y }}px"></div>
+    {%- endif -%}
+    {%- if t.expected -%}
+      <div class="head {{ t.expected.tone }}{% if t.crosses_zero %} crossing{% endif %}
+                  {% if t.expected.at < t.now.at %}left{% else %}right{% endif %}"
+           style="left:{{ '%.3f'|format(t.expected.at) }}%;top:{{ y }}px"></div>
+    {%- endif -%}
+    <div class="dot {{ t.now.tone }}" style="left:{{ '%.3f'|format(t.now.at) }}%;top:{{ y }}px"></div>
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro line(row, band_from, band_width) -%}
+{# Two tracks share one scale, so each is labelled at its own height. Without the labels
+   the row shows two near-identical dots twelve pixels apart and nothing saying which is
+   which — the subtitle explains it, but a legend you have to remember is not a legend. #}
+<div class="scale">
+  <div class="band" style="left:{{ '%.3f'|format(band_from) }}%;width:{{ '%.3f'|format(band_width) }}%"></div>
+  <span class="track-label" style="top:18px">policy</span>
+  <span class="track-label" style="top:38px">direction</span>
+  <div class="axis-line" style="top:18px"></div>
+  <div class="axis-line" style="top:38px"></div>
+  <div class="zero"></div>
+  {{ track(row.policy_track, 18) }}
+  {{ track(row.directional_track, 38) }}
+</div>
+{%- endmacro -%}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block heading %}
+  <p class="crumb"><a href="/">Instruments</a> / <span class="here">{{ entity }}</span></p>
+  <h1 class="page-title">{{ entity }}</h1>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+  <p class="empty" style="padding:24px">
+    Nothing is stored for {{ entity }} in the most recent pass. It may not be in the
+    configured universe, or the pass may not have reached it.
+  </p>
+</div>
+{% endblock %}

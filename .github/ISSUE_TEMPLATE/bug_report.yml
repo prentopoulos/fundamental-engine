@@ -1,0 +1,23 @@
+name: Bug report
+description: Report reproducible behaviour with redacted or synthetic data.
+title: "[Bug] "
+body:
+  - type: textarea
+    id: behaviour
+    attributes:
+      label: Observed and expected behaviour
+      description: Include the command or action that triggered the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Use synthetic inputs. Do not include credentials or local databases.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, project revision, and relevant redacted output.

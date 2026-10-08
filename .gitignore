@@ -1,0 +1,43 @@
+# Secrets and machine-specific settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.aws/
+.codex/
+
+# Local data, cached model replies, and build output
+data/
+build/
+dist/
+*.db
+*.db-*
+*.sqlite*
+*.log
+
+# Private working notes and local assistant tooling
+.agents/
+.claude/
+.impeccable/
+openspec/
+COMMISSIONING.md
+
+# Python and test caches
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

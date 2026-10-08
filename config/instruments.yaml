@@ -1,0 +1,72 @@
+# Instrument symbols and explicit transmission weights.
+# Add instruments here; the engine derives the entities it needs to score.
+# See docs/methodology.md for the assumptions behind these coefficients.
+
+instruments:
+  fx:
+    - AUDUSD
+    - EURUSD
+    - GBPUSD
+    - USDCAD
+    - USDJPY
+    - EURAUD
+    - EURCAD
+    - EURJPY
+    - EURNZD
+    - GBPAUD
+    - GBPCAD
+    - GBPJPY
+    - CADJPY
+  metals_energy:
+    - XAUUSD      # gold
+    - XAGUSD      # silver
+    - WTICOUSD    # West Texas oil
+  indices:
+    - SPX500USD   # S&P 500
+    - NAS100USD   # Nasdaq 100
+    - US30USD     # Dow
+
+# Non-FX instruments have no central bank of their own, so they inherit an inferred
+# policy stance from USD through a signed multiplier, and take their directional axis
+# either from their own situations or from their own entity minus USD.
+#
+# `policy_from` names the entity the policy axis is inherited from; `policy_multiplier`
+# is the signed weight. The differentiated index magnitudes are a judgement, not
+# arithmetic — long-duration tech reprices harder on rates than the Dow does. They live
+# here precisely so the first weeks of recorded reads can argue with them.
+non_fx:
+  XAUUSD:
+    entity: XAU
+    policy_from: USD
+    policy_multiplier: -1.0
+    directional: spread          # XAU - USD
+  XAGUSD:
+    entity: XAG
+    policy_from: USD
+    policy_multiplier: -1.0
+    directional: spread          # XAG - USD
+  WTICOUSD:
+    entity: WTI
+    policy_from: USD
+    policy_multiplier: -0.5
+    directional: own             # a stronger dollar is a headwind, not the driver
+  SPX500USD:
+    entity: SPX500
+    policy_from: USD
+    policy_multiplier: -1.0
+    directional: own
+  NAS100USD:
+    entity: NAS100
+    policy_from: USD
+    policy_multiplier: -1.3
+    directional: own
+  US30USD:
+    entity: US30
+    policy_from: USD
+    policy_multiplier: -0.8
+    directional: own
+
+# Entities scored even though no instrument names them directly. Empty today: every one
+# of the 13 is reachable from the list above. Kept as a seam so a currency can be scored
+# ahead of a pair being added.
+extra_entities: []
