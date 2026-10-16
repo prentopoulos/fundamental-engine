@@ -76,7 +76,7 @@ model/prompt/evaluation, retrieval, training, runtime-state or operational chang
 - Architecture diagrams: C4 as code, drawn to the c4model.com notation guide (context and
   container views, plus an ERD of the SQLite schema). One Structurizr DSL model in
   `docs/architecture/`, exported to SVG, with Mermaid where a README shows a diagram
-  (showcase skill). None exist yet; Phase 2 draws them.
+  (showcase skill). None exist yet; Phase 4 draws them.
 - Code review: every change to code is reviewed before merge (WORKFLOW.md).
 
 Gate: `python -m ruff check . && python -m ruff format --check . && python -m pytest -q`.
@@ -141,8 +141,21 @@ Milestones are ordered by dependency.
 | Phase | Deliverable | Status |
 |---|---|---|
 | 0 | Toolchain, lockfile, quality gate with the constitution copy check, smoke checks; offline AI evaluation scaffold | Never run as its own phase; delivered by Phase 2 |
-| 1 | Fundamental reader (OpenSpec `build-fundamental-reader`, 101 tasks): feeds, situations, reads, expectations, narratives, local board, disabled loop, commissioning pass; C4 architecture diagrams as code | Implemented before kit adoption and released 2026-10-07; archive and diagrams delivered by Phase 2 |
-| 2 | Kit alignment: what Phases 0–1 would have produced under this workflow (OpenSpec `adopt-kit-foundations`) | Spec ready, in owner review (draft PR) |
+| 1 | Fundamental reader (OpenSpec `build-fundamental-reader`, 101 tasks): feeds, situations, reads, expectations, narratives, local board, disabled loop, commissioning pass; C4 architecture diagrams as code | Implemented before kit adoption and released 2026-10-07; archive delivered by Phase 2, diagrams by Phase 4 |
+| 2 | Foundations: Phase 1 archived into main specs and corrected, dependency lock, one gate with the constitution copy check, CI on the gate, link and licence checks, PR template TL;DR (OpenSpec `adopt-kit-foundations`) | Spec ready, in owner review (draft PR) |
+| 3 | Evidence: per-pass system bundle, frozen offline evaluation set and plan, 0.1.0 release record, runbook, build-safety and macro-read reviews, tested published figures, pre-publication scan | Planned |
+| 4 | Showcase: C4 and schema diagrams as code, six-slide deck, captioned walkthrough video, README links to both | Planned |
+
+The kit catch-up was split into Phases 2–4 by the owner on 2026-10-16, so each is one
+reviewable PR. Questions for the later phases, kept here so they are not lost:
+- Phase 3: store the system bundle as an additive `bundle_id` column on `passes` plus a
+  `bundles` table, migrated after a backup (recommended), or as JSON files under
+  `build/bundles/`. Behind the live-records ⛔ gate.
+- Phase 4: export diagrams with a pinned Structurizr CLI downloaded into ignored
+  `.local/tools/` (recommended; Java 17 is installed, Docker is not), or use hand-written
+  Mermaid only.
+
+A first draft of Phase 3 and 4 specs is in commit `b1ce6b6` (the first Phase 2 proposal).
 
 ### ⛔ Before spending Anthropic API credit
 

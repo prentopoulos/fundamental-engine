@@ -64,7 +64,7 @@ Python 3.11+ in a `.venv`, installed with `python -m pip install -e ".[dev,mcp]"
 manager is pip with setuptools; there is no lockfile yet (Phase 2 adds one). Copy
 `.env.example` to `.env` for live runs only.
 Architecture diagrams: C4 as code (Structurizr DSL in `docs/architecture/`, Mermaid in
-READMEs), drawn in Phase 2; see the showcase skill. Figma is for slides and mocks.
+READMEs), drawn in Phase 4; see the showcase skill. Figma is for slides and mocks.
 
 Windows working notes:
 - write multi-line scripts to a file and run it; long bash heredocs mangle backslashes;

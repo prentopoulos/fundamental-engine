@@ -1,11 +1,11 @@
 ## Why
 
-Fundamental Engine was built and released before it adopted the project kit on 2026-10-15. So
-it skipped the kit's Phase 0, it has no main specs, no single gate, no constitution check, no
-AI-ops or domain evidence records and no architecture diagrams, and it was never checked
-before going public. This change, **PROJECT.md Phase 2**, delivers what Phases 0 and 1 would
-have produced had the project started from the kit. It does not change what the engine reads
-or how it scores.
+Fundamental Engine was built and released before it adopted the project kit on 2026-10-15. It
+never ran the kit's Phase 0: there is no lock, no single gate, no check that the constitution's
+copies agree, and Phase 1 was never archived, so `openspec/specs/` is empty. This change,
+**PROJECT.md Phase 2**, lays those foundations first. Phases 3 and 4 then build the evidence
+records and the showcase under the gate this phase adds. It does not change what the engine
+reads or how it scores.
 
 ## What Changes
 
@@ -14,30 +14,13 @@ or how it scores.
   rather than 18, a half-life per axis, the breadth floor, release-only refreshes by default,
   the neutral guard directory name, and the article sitemap feed. Add specs for the
   unspecified demo, desk chat, MCP server and archive replay.
-- **Phase 0 foundations.** A pinned dependency lock used by CI. One gate command that runs
-  lint, format, tests, `openspec validate --all --strict` and a new constitution copy check.
-  CI runs that gate. Tests check that every local link in tracked Markdown resolves and that
-  the licence is named.
-- **AI operations records.** Each pass records the system bundle it ran with: prompt hashes,
-  model routing, config hash, package version and code revision. Recorded-reply fixtures
-  become a frozen offline evaluation set with a written plan. The release of 0.1.0 gets a
-  release record, and failures get a stop-and-recover runbook.
-- **Build-safety review.** One review record accounts for all 17 Agent Builder workflows:
-  threats from feed text, secrets, data and retention, spend, telemetry, release gates and
-  CI. Each gap is recorded with an owner and a recheck trigger.
-- **Domain review.** Independent known-answer tests for the arithmetic invariants and the
-  README's worked examples. The figures in the README and methodology sit between markers
-  and are tested, so a drifted number fails.
-- **Architecture diagrams.** A Structurizr DSL C4 model with context and container views,
-  exported to SVG and Mermaid. An ERD of the SQLite schema, with a test that it names every
-  table.
-- **Pre-publication checks** on the already-public repository:
-  - a whole-history secret scan, proved with a planted key;
-  - a survey for private data and personal details;
-  - a publishing list;
-  - a check from a fresh clone.
-- **Showcase.** A six-slide deck and a two-minute captioned walkthrough built on demo data.
-  The README links to both once the owner approves them. The PR template gains a TL;DR.
+- **Dependency lock.** A pinned lock for the `dev` and `mcp` extras on Windows and Linux,
+  used by CI, with a check that it covers every declared dependency.
+- **One gate.** `scripts/gate.py` runs lint, format, tests and `openspec validate --all
+  --strict`, plus a new constitution copy check. CI runs the gate on the existing matrix.
+- **Document checks.** Every local link in tracked Markdown resolves to a tracked file, and
+  the README names the licence. An import test keeps model code out of the arithmetic.
+- **PR template.** The template gains the TL;DR the workflow requires.
 
 ## Capabilities
 
@@ -45,11 +28,6 @@ or how it scores.
 
 - `quality-gate`: the single gate command, the constitution copy check, the dependency lock,
   and the link and licence checks over tracked Markdown.
-- `run-records`: the system bundle recorded per pass and the frozen offline evaluation set.
-- `architecture-docs`: the C4 model as code, its exported views and the schema ERD kept in
-  step with the schema.
-- `published-figures`: figures quoted in the README and methodology, checked against the
-  engine's own arithmetic.
 
 ### Modified Capabilities
 
@@ -60,25 +38,27 @@ demo, desk chat, MCP server and archive replay. They are added to this change in
 
 ## Non-goals
 
+- **Phase 3 (Evidence)** covers:
+  - the per-pass system bundle, the frozen evaluation set and plan;
+  - the release record and runbook;
+  - the build-safety and macro-read reviews;
+  - tested published figures and the pre-publication scan.
+- **Phase 4 (Showcase)** covers the C4 and schema diagrams, the deck, the walkthrough video
+  and the README links to them.
 - No change to scoring, thresholds, half-lives, breadth, coefficients, ranking, prompts or
-  models. The bounded "tilt" score and the other proposals in the 2026-09-10 rebuild folder
-  stay unadopted.
-- No live API call, provider evaluation, commissioning follow-up, re-banding or week-two
-  model comparison: they spend money and are owner decisions.
-- No budget enforcement or retention rule. Their values are owner decisions (PROJECT.md §2);
-  this phase records the gaps and leaves the scheduler gate closed.
-- No enabling the scheduler, hosting, or publishing beyond phase branches and draft PRs.
-- No Git history rewrite.
+  models. The bounded "tilt" score and the other 2026-09-10 rebuild proposals stay unadopted.
+- No live API call, budget enforcement, retention rule, scheduler change, hosting or history
+  rewrite.
 
 ## Impact
 
-- New files: `scripts/gate.py`, a lock file, new tests, `docs/architecture/`,
-  `docs/reviews/`, `docs/evaluation/`, `docs/runbook.md`, `docs/releases/0.1.0.md`,
-  `docs/walkthrough.md`, and `openspec/specs/`.
-- Changed: `.github/workflows/ci.yml` runs the gate and installs from the lock; the
-  `.github/pull_request_template.md` TL;DR; the README and methodology figure markers; and
-  `docs/architecture.md`.
-- Pass recording gains a bundle field. Storing it in the existing local database needs an
-  additive migration, which is behind the live-records ⛔ gate (design, open question 3).
-- The gates touched are publishing (deck, video, README links, Phase 1's change record) and
-  live records (the migration). No §5 rule or ⛔ gate is amended.
+- New files:
+  - `scripts/gate.py` and `requirements/lock.txt`
+  - tests for the constitution copies, links, the licence, the lock and arithmetic imports
+  - `openspec/specs/`
+- Changed: `.github/workflows/ci.yml` installs from the lock, installs a pinned OpenSpec CLI
+  and runs the gate. `.github/pull_request_template.md` and `CONTRIBUTING.md` change, and
+  the gate command in the root documents.
+- No runtime behaviour, stored data or schema changes.
+- Gate touched: publishing, because the main specs and Phase 1's change record become public
+  (open question 1). No §5 rule or ⛔ gate is amended.

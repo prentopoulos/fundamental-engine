@@ -28,12 +28,12 @@ reference on prose over figures applies to any change there.
 
 | Record | Location / current status |
 |---|---|
-| System bundle and last known-good version | Partial. Each expectation and narrative stores its prompt, model id and effort, but no pass carries one bundle id covering prompts, routing, config and code revision. Last known-good: commissioning pass 5, 2026-08-31, in the local commissioning record. Phase 2 adds the bundle record |
-| Evaluation plan, held-out cases and evaluator | TBD (Phase 2). Recorded-reply fixtures in `tests/fixtures/` exercise every parser, including malformed and non-adherent replies |
+| System bundle and last known-good version | Partial. Each expectation and narrative stores its prompt, model id and effort, but no pass carries one bundle id covering prompts, routing, config and code revision. Last known-good: commissioning pass 5, 2026-08-31, in the local commissioning record. Phase 3 adds the bundle record |
+| Evaluation plan, held-out cases and evaluator | TBD (Phase 3). Recorded-reply fixtures in `tests/fixtures/` exercise every parser, including malformed and non-adherent replies |
 | Offline deterministic check command | `python -m ruff check . && python -m ruff format --check . && python -m pytest -q` |
 | Authorized provider-evaluation command and budget | `scripts/compare_model.py` replays stored prompts against a named model. Budget TBD; behind the spending ⛔ gate. Not run in any recorded evidence |
 | Run records / metrics / alerts | `passes` table: trigger, per-stage input and output tokens, billed and replayed calls, estimated cost, failed stage, entities skipped. `scripts/inspect_pass.py` checks adherence, citations and no-read integrity. No alerts |
-| Release evidence and stop/recovery runbook | TBD (Phase 2). `docs/running.md` covers troubleshooting |
+| Release evidence and stop/recovery runbook | TBD (Phase 3). `docs/running.md` covers troubleshooting |
 | Operational owner and maintenance/recheck cadence | prentopoulos. Cadence TBD |
 
 ## Current operational limits
