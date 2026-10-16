@@ -42,8 +42,10 @@ it (PROJECT.md § Amending the constitution); a gate check fails if this copy dr
   one score.
 - Repeated coverage of one development is not independent evidence: headlines update a
   situation, and breadth counts situations.
-- Language models interpret; Python calculates. Scores, states, degrees, instrument weights and
-  rankings come from deterministic code over stored inputs, never from model output.
+- Language models interpret; Python calculates. Models supply inputs (magnitude, polarity,
+  situations, each entity's expected state and confidence) and prose. Current scores and states,
+  degrees, instrument reads and rankings are computed by deterministic code from those stored
+  inputs.
 - The narrative stage receives a fact sheet, never raw feed text, and every record a narrative
   cites must resolve.
 - Tests run offline: no live feeds, API credentials or paid calls. Feeds, model clients and

@@ -18,7 +18,7 @@ context: |
   - `no read` is never stored, rendered, combined or reported as `neutral`; an unreadable axis shows its reason.
   - Current and expected reads stay separate in storage and arithmetic; nothing blends them into one score.
   - Repeated coverage of one development is not independent evidence: headlines update a situation, and breadth counts situations.
-  - Language models interpret; Python calculates. Scores, states, degrees, instrument weights and rankings come from deterministic code over stored inputs, never from model output.
+  - Language models interpret; Python calculates. Models supply inputs (magnitude, polarity, situations, each entity's expected state and confidence) and prose. Current scores and states, degrees, instrument reads and rankings are computed by deterministic code from those stored inputs.
   - The narrative stage receives a fact sheet, never raw feed text, and every record a narrative cites must resolve.
   - Tests run offline: no live feeds, API credentials or paid calls. Feeds, model clients and clocks are injected.
   - Research only: no orders, broker or account access. The web interface serves loopback only and the MCP server opens the database read-only.

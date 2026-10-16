@@ -94,7 +94,7 @@ These rules and the ⛔ gates in §6 are this project's constitution. They overr
 WORKFLOW.md, the skills, OpenSpec specs and HANDOFF.md; only the owner's current instructions
 and recorded gate decisions come before them.
 
-**Version 1.0.0** · Ratified 2026-10-15 · Last amended 2026-10-15
+**Version 1.0.1** · Ratified 2026-10-15 · Last amended 2026-10-16
 
 - Secrets use the runtime secret mechanism (gitignored .env for local development); never
   print, commit or include them in reports.
@@ -107,8 +107,10 @@ and recorded gate decisions come before them.
   one score.
 - Repeated coverage of one development is not independent evidence: headlines update a
   situation, and breadth counts situations.
-- Language models interpret; Python calculates. Scores, states, degrees, instrument weights and
-  rankings come from deterministic code over stored inputs, never from model output.
+- Language models interpret; Python calculates. Models supply inputs (magnitude, polarity,
+  situations, each entity's expected state and confidence) and prose. Current scores and states,
+  degrees, instrument reads and rankings are computed by deterministic code from those stored
+  inputs.
 - The narrative stage receives a fact sheet, never raw feed text, and every record a narrative
   cites must resolve.
 - Tests run offline: no live feeds, API credentials or paid calls. Feeds, model clients and
@@ -133,6 +135,7 @@ and recorded gate decisions come before them.
 | Version | Date | Change | Decided by |
 |---|---|---|---|
 | 1.0.0 | 2026-10-15 | Ratified at kit adoption. Rules 4–12 are taken from the README, CONTRIBUTING, SECURITY, the methodology and existing tests; open to the owner's review in the Phase 2 PR | prentopoulos (setup) |
+| 1.0.1 | 2026-10-16 | Rule 7 corrected: the expectation stage's model answer sets each entity's expected state and confidence (`engine/stages.py`), so the rule no longer says states never come from model output. No behaviour or check changes. Rules 4–12 confirmed | prentopoulos |
 
 ## 6. Milestones and gates
 
