@@ -142,7 +142,7 @@ Milestones are ordered by dependency.
 |---|---|---|
 | 0 | Toolchain, lockfile, quality gate with the constitution copy check, smoke checks; offline AI evaluation scaffold | Never run as its own phase; delivered by Phase 2 |
 | 1 | Fundamental reader (OpenSpec `build-fundamental-reader`, 101 tasks): feeds, situations, reads, expectations, narratives, local board, disabled loop, commissioning pass; C4 architecture diagrams as code | Implemented before kit adoption and released 2026-10-07; archive and diagrams delivered by Phase 2 |
-| 2 | Kit alignment: what Phases 0–1 would have produced under this workflow (OpenSpec `adopt-kit-foundations`) | Planned |
+| 2 | Kit alignment: what Phases 0–1 would have produced under this workflow (OpenSpec `adopt-kit-foundations`) | Spec ready, in owner review (draft PR) |
 
 ### ⛔ Before spending Anthropic API credit
 

@@ -10,8 +10,9 @@ Agent skills and OpenSpec were set up on 2026-10-15 from the new_project_agent_s
 - Phase 1 (`build-fundamental-reader`): all 101 tasks are ticked and the code is on `main`,
   released publicly on 2026-10-07. The change is not archived, so `openspec/specs/` is empty.
   Its record stays untracked until the owner decides how to publish it (PROJECT.md §6).
-- Phase 2 (`adopt-kit-foundations`): next. It delivers what Phases 0–1 would have produced
-  under this workflow.
+- Phase 2 (`adopt-kit-foundations`): proposed on branch `phase-2/adopt-kit-foundations`
+  (setup commit plus a spec-only commit), with a draft PR for owner review. No task has
+  started. It delivers what Phases 0–1 would have produced under this workflow.
 - `engine/prompts/narrative.md` shows as modified in `git status` but has no content diff. It
   was like that before setup and is not part of it.
 
@@ -31,5 +32,7 @@ Setup verification on 2026-10-15, local Windows:
 - `openspec validate --all --strict`: 1 passed (`build-fundamental-reader`).
 - No AI runtime evaluation exists beyond the 2026-08-31 commissioning pass (local record).
 
-Next action: propose Phase 2, `adopt-kit-foundations`, on its own branch with a spec-only
-commit and a draft PR.
+Next action: the owner reviews the Phase 2 draft PR, including the four open questions in
+the change's design and the constitution rules 4–12. Then, in a fresh session, run
+`/next-phase` to implement `adopt-kit-foundations` from task 1.1. Tasks 1.5, 3.2 and 6.3 wait
+for open questions 1, 3 and 2.
