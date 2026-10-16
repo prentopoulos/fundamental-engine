@@ -4,7 +4,7 @@
 - [ ] 1.2 Before `openspec/specs/` is first committed, correct the synced unattended-loop guard requirement to name `trading_runtime`, as `engine/store/guard.py` does, and note the edit in the PR
 - [ ] 1.3 Add MODIFIED deltas to this change for drift shown by code and tests: 19 instruments including CADJPY (`instrument-universe`); per-axis half-lives and the breadth floor (`stance-reading`); release-only refreshes by default with optional periodic reads (`unattended-loop`); the article sitemap feed (`feed-ingestion`)
 - [ ] 1.4 Add ADDED requirements for the offline demo, the desk chat, the read-only MCP server and archive replay, with scenarios taken from existing tests
-- [ ] 1.5 Apply the owner's decision on Phase 1's change record (design open question 1) and update `.gitignore` to match
+- [ ] 1.5 Confirm that `.gitignore` keeps Phase 1's change record and its archived copy local (design decision 4), and that `git status` shows neither after archiving
 - [ ] 1.6 Run `openspec validate --all --strict` and record the result
 
 ## 2. Lock and checks

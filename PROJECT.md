@@ -192,10 +192,9 @@ Recorded decisions (owner, 2026-10-15):
   the owner's go-ahead.
 - The root process documents (AGENTS, CLAUDE, WORKFLOW, HANDOFF, AI_OPS, PROJECT) and
   `openspec/` are published. `.agents/`, `.claude/` and `COMMISSIONING.md` stay local.
-- Pending: the `build-fundamental-reader` change record names the sibling trading project and
-  where the copied feed and model code came from, which the public code neutralised. It stays
-  untracked until the owner decides whether to publish it as is, publish it neutralised, or
-  keep it local.
+- The `build-fundamental-reader` change record stays local, including its archived copy,
+  because it names the sibling trading project and where the copied feed and model code came
+  from. Only the reconciled main specs it produces are published (owner, 2026-10-16).
 
 ### ⛔ Before exposing a service or adding a write action
 

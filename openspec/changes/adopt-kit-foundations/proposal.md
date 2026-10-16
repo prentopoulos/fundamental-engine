@@ -60,5 +60,7 @@ demo, desk chat, MCP server and archive replay. They are added to this change in
   and runs the gate. `.github/pull_request_template.md` and `CONTRIBUTING.md` change, and
   the gate command in the root documents.
 - No runtime behaviour, stored data or schema changes.
-- Gate touched: publishing, because the main specs and Phase 1's change record become public
-  (open question 1). No §5 rule or ⛔ gate is amended.
+- Gate touched: publishing, because the main specs become public. Phase 1's change record
+  stays local (owner, 2026-10-16).
+- This change amends no §5 rule or ⛔ gate. During its review the owner amended rule 7
+  (constitution v1.0.1) in a separate commit.

@@ -26,8 +26,8 @@ COMMISSIONING.md
 .local/
 tmp/
 
-# Phase 1's change record names the sibling trading project; it stays local until the owner
-# decides how to publish it (PROJECT.md §6, publishing).
+# Phase 1's change record names the sibling trading project and stays local; only the main
+# specs it produces are published (owner decision, 2026-10-16; PROJECT.md §6).
 openspec/changes/build-fundamental-reader/
 openspec/changes/archive/*-build-fundamental-reader/
 
