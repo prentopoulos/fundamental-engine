@@ -1,0 +1,39 @@
+schema: spec-driven
+
+context: |
+  Fundamental Engine: turns macroeconomic headlines and an economic calendar into an explainable research board of separate current and expected policy and directional reads for 19 instruments and 13 entities, each linked to its evidence.
+  Read PROJECT.md for current scope and WORKFLOW.md for the phase workflow.
+  Stack: Python 3.11+, SQLite, FastAPI and Jinja2 on loopback, APScheduler, Pydantic, the Anthropic API (Haiku 4.5 triage, Opus 5.5 other stages), optional read-only MCP server.
+  Pipeline: ingest feeds, model triage, scoring and situation updates, deterministic arithmetic, model expectation and narrative, store; the web UI, CLI and MCP read stored results.
+  Scope: one operator on one machine; research only, with no orders, broker, prices, hosting or other model providers.
+  Data: live mode uses public feeds and the operator's own paid key; data/ and build/ stay local. The demo uses fictional scenarios; tests use synthetic and recorded fixtures.
+  Gates: spending API credit, enabling unattended runs, publishing, exposing a service, deleting live records (PROJECT.md section 6).
+  Gate command: python -m ruff check . && python -m ruff format --check . && python -m pytest -q (Phase 2 adds openspec validation and the constitution copy check).
+  Remote: public GitHub repository; phase branches and draft PRs are pushed, merges wait for the owner. .agents/, .claude/, .codex/, COMMISSIONING.md, data/ and build/ are never committed.
+
+  Non-negotiables, verbatim from PROJECT.md §5 (the constitution, which governs; only the owner amends it):
+  - Secrets use the runtime secret mechanism (gitignored .env for local development); never print, commit or include them in reports.
+  - Never fabricate results or external-service output. Label mocked, local and live results accurately. Preserve failed runs.
+  - Operator resolves all ⛔ gates. The agent never satisfies or waives one itself.
+  - `no read` is never stored, rendered, combined or reported as `neutral`; an unreadable axis shows its reason.
+  - Current and expected reads stay separate in storage and arithmetic; nothing blends them into one score.
+  - Repeated coverage of one development is not independent evidence: headlines update a situation, and breadth counts situations.
+  - Language models interpret; Python calculates. Models supply inputs (magnitude, polarity, situations, each entity's expected state and confidence) and prose. Current scores and states, degrees, instrument reads and rankings are computed by deterministic code from those stored inputs.
+  - The narrative stage receives a fact sheet, never raw feed text, and every record a narrative cites must resolve.
+  - Tests run offline: no live feeds, API credentials or paid calls. Feeds, model clients and clocks are injected.
+  - Research only: no orders, broker or account access. The web interface serves loopback only and the MCP server opens the database read-only.
+  - A change to thresholds, half-lives, breadth, coefficients or ranking states its assumption and updates docs/methodology.md in the same change.
+  - No claim of predictive accuracy, trading performance or calibrated probability without a predeclared evaluation; confidence weights are ranking multipliers.
+
+rules:
+  proposal:
+    - State which PROJECT.md phase this change implements.
+    - Include a Non-goals section.
+    - If the change amends a PROJECT.md §5 rule or a ⛔ gate, say so; the amendment follows PROJECT.md § Amending the constitution in its own commit.
+  design:
+    - Designs that use paid or external services name the operator-approved budget and gate.
+    - Offline phases have no live credential, network submission or secret dependency.
+    - "Include a Non-negotiables check: each PROJECT.md §5 rule and §6 ⛔ gate the change touches, how the design keeps it, and any exception with the owner's decision."
+    - For AI behavior changes, name the system bundle, fixed evaluation cases, affected failure paths, and recovery evidence; keep provider evaluations separately budgeted.
+  tasks:
+    - Keep tasks independently committable or group closely related tasks logically.
