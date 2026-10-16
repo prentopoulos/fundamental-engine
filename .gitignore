@@ -18,12 +18,18 @@ dist/
 *.sqlite*
 *.log
 
-# Private working notes and local assistant tooling
+# Private working notes and local assistant tooling (owner decision, 2026-10-15)
 .agents/
 .claude/
 .impeccable/
-openspec/
 COMMISSIONING.md
+.local/
+tmp/
+
+# Phase 1's change record names the sibling trading project; it stays local until the owner
+# decides how to publish it (PROJECT.md §6, publishing).
+openspec/changes/build-fundamental-reader/
+openspec/changes/archive/*-build-fundamental-reader/
 
 # Python and test caches
 __pycache__/
